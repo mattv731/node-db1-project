@@ -12,12 +12,24 @@ router.get('/', async(req, res, next) => {
   
 })
 
-router.get('/:id', (req, res, next) => {
-  // DO YOUR MAGIC
+router.get('/:id', async(req, res, next) => {
+  try{
+    const data = await Accounts.getById(req.params.id)
+    res.json(data)
+  }
+  catch (err) {
+    console.log(err)
+  }
 })
 
-router.post('/', (req, res, next) => {
-  // DO YOUR MAGIC
+router.post('/', async (req, res, next) => {
+  try {
+    const data = await Accounts.create(req.body)
+    res.json(data)
+  }
+  catch (err) {
+    console.log(err)
+  }
 })
 
 router.put('/:id', (req, res, next) => {
