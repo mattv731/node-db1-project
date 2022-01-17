@@ -1,5 +1,10 @@
 const router = require('express').Router()
 const Accounts = require('./accounts-model')
+const {
+  checkAccountPayload,
+  checkAccountNameUnique,
+  checkAccountId
+} = require('./accounts-middleware')
 
 router.get('/', async(req, res, next) => {
   try {
@@ -12,9 +17,10 @@ router.get('/', async(req, res, next) => {
   
 })
 
-router.get('/:id', async(req, res, next) => {
+router.get('/:id', checkAccountId,  async(req, res, next) => {
+  console.log(req.params.id)
   try{
-    const data = await Accounts.getById(req.params.id)
+    const data =  await Accounts.getById(req.params.id)
     res.json(data)
   }
   catch (err) {
@@ -22,33 +28,33 @@ router.get('/:id', async(req, res, next) => {
   }
 })
 
-router.post('/', async (req, res, next) => {
+router.post('/', checkAccountPayload, async (req, res, next) => {
   try {
     const data = await Accounts.create(req.body)
-    res.json(data)
+    res.status(201).json(data)
   }
   catch (err) {
-    console.log(err)
+    next()
   }
 })
 
-router.put('/:id', async (req, res, next) => {
+router.put('/:id', checkAccountPayload, async (req, res, next) => {
   try {
     const data = await Accounts.updateById(req.params.id, req.body)
     res.json(data)
   }
   catch (err) {
-    console.log(err)
+    next()
   }
 });
 
-router.delete('/:id', (req, res, next) => {
+router.delete('/:id', checkAccountId, async (req, res, next) => {
   try {
-    const data = Accounts.deleteById(req.params.id)
+    const data = await Accounts.deleteById(req.params.id)
     res.json(data)
   }
   catch(err) {
-    console.log(err)
+    next()
   }
 })
 
