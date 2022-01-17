@@ -1,8 +1,15 @@
-const db = require('../../data/db-config');
 const router = require('express').Router()
+const Accounts = require('./accounts-model')
 
-router.get('/', (req, res, next) => {
-  return db('accounts')
+router.get('/', async(req, res, next) => {
+  try {
+    const data = await Accounts.getAll()
+    res.json(data)
+    }
+  catch (err) {
+    console.log(err)
+  }
+  
 })
 
 router.get('/:id', (req, res, next) => {
