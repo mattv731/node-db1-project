@@ -1,3 +1,4 @@
+const { get } = require('express/lib/response')
 const db = require('../../data/db-config')
 
 const getAll = () => {
@@ -14,12 +15,16 @@ async function create ({name, budget}) {
   return body
 }
 
-const updateById = (id, account) => {
-  // DO YOUR MAGIC
+const updateById = async (id, {name, budget}) => {
+  await db('accounts').where('id', id).update({name, budget})
+  const body = await getById(id)
+  return(body)
 }
 
-const deleteById = id => {
-  // DO YOUR MAGIC
+const deleteById = async (id) => {
+  const deleted = await getById(id)
+  await db('accounts').where('id', id).del()
+  return(deleted)
 }
 
 module.exports = {
