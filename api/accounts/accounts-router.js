@@ -1,7 +1,8 @@
+const db = require('../../data/db-config');
 const router = require('express').Router()
 
 router.get('/', (req, res, next) => {
-  // DO YOUR MAGIC
+  return db('accounts')
 })
 
 router.get('/:id', (req, res, next) => {
