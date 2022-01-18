@@ -2,27 +2,31 @@ const Accounts = require('./accounts-model')
 
 exports.checkAccountPayload = (req, res, next) => {
   const { name, budget } = req.body
+  console.log(!!name, !!budget)
   const text = name.trim()
-  const num = parseInt(budget)
-  if(!name || !budget) {
-    res.status(400).json({
-      message: "name and budget are required"
-    })
-  } else if (text < 3 || text > 100) {
-    res.status(400).json({ message: "name of account must be between 3 and 100" })
-  } else if (!num) {
+  if (!parseInt(budget)) {
     res.status(400).json({ message: "budget of account must be a number" })
-  } else if (num > 1000000 || num < 0) {
+  } else if(!!name === false || !!budget === false) {
+    res.status(400).json({ message: "name and budget are required" })
+  } else if (text.length < 3 || text.length > 100) {
+    res.status(400).json({ message: "name of account must be between 3 and 100" })
+  } else if (budget > 1000000 || budget < 0) {
     res.status(400).json({ message: "budget of account is too large or too small" })
   } else {
-    req.body.name = text
-    req.body.budget = num
+    req.body.name.trim()
     next()
   }
 }
 
-exports.checkAccountNameUnique = (req, res, next) => {
- next()
+exports.checkAccountNameUnique = async (req, res, next) => {
+ const name = req.body.name.trim()
+ const get = await Accounts.getAll()
+ get.forEach(account => {
+   if (account.name.trim() === name){
+     return res.status(400).json({ message: "that name is taken" })
+   }
+   else {next()}
+ })
 }
 
 exports.checkAccountId = async (req, res, next) => {
@@ -32,7 +36,7 @@ exports.checkAccountId = async (req, res, next) => {
       res.status(404).json({ message: "account not found" })
     }
     else {next()}
-  } catch(err) {
-    res.status(500).json({message: "account not found"})
+  } catch {
+    next()
   }
 }

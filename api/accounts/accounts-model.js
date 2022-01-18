@@ -9,14 +9,14 @@ const getById = id => {
   return db('accounts').where('id', id).first()
 }
 
-async function create ({name, budget}) {
-  const [id] = await db('accounts').insert({name, budget});
+const create = async({name, budget}) => {
+  const id = await db('accounts').insert({name, budget})
   const body = await getById(id)
   return body
 }
 
-const updateById = async (id, {name, budget}) => {
-  await db('accounts').where('id', id).update({name, budget})
+const updateById = async (id, changes) => {
+  await db('accounts').where('id', id).update(changes)
   const body = await getById(id)
   return body
 }
